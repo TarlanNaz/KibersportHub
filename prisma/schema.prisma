@@ -1,0 +1,188 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Типы игровых мест
+enum SpotType {
+  PC
+  CONSOLE
+  VR
+  STREAMING
+}
+
+// Статусы бронирования
+enum BookingStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+// Категории товаров
+enum ProductCategory {
+  FOOD
+  DRINKS
+  MERCH
+  ACCESSORIES
+}
+
+// Статусы мест
+enum SpotStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+}
+
+// Игровое место
+model GamingSpot {
+  id          String      @id @default(cuid())
+  name        String
+  spotType    SpotType    @default(PC)
+  status      SpotStatus  @default(AVAILABLE)
+  specs       String?
+  hourlyRate  Float       @default(150.0)
+  position    Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  bookings    Booking[]
+}
+
+// Тариф
+model Tariff {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  multiplier  Float    @default(1.0)
+  discount    Float    @default(0.0)
+  startTime   String?
+  endTime     String?
+  minHours    Int      @default(1)
+  maxHours    Int?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  bookings    Booking[]
+}
+
+// Клиент
+model Customer {
+  id            String          @id @default(cuid())
+  name          String
+  phone         String          @unique
+  email         String?
+  nickname      String?
+  balance       Float           @default(0.0)
+  totalSpent    Float           @default(0.0)
+  visitsCount   Int             @default(0)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  bookings      Booking[]
+  sales         Sale[]
+  loyaltyAccount LoyaltyAccount?
+}
+
+// Бронирование
+model Booking {
+  id          String        @id @default(cuid())
+  spotId      String
+  spot        GamingSpot    @relation(fields: [spotId], references: [id])
+  customerId  String?
+  customer    Customer?     @relation(fields: [customerId], references: [id])
+  tariffId    String?
+  tariff      Tariff?       @relation(fields: [tariffId], references: [id])
+  startTime   DateTime
+  endTime     DateTime
+  status      BookingStatus @default(ACTIVE)
+  baseAmount  Float         @default(0.0)
+  discount    Float         @default(0.0)
+  totalAmount Float         @default(0.0)
+  notes       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+// Товар
+model Product {
+  id          String          @id @default(cuid())
+  name        String
+  category    ProductCategory @default(FOOD)
+  price       Float
+  costPrice   Float           @default(0.0)
+  stock       Int             @default(0)
+  imageUrl    String?
+  isActive    Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  sales       SaleItem[]
+}
+
+// Продажа
+model Sale {
+  id            String      @id @default(cuid())
+  customerId    String?
+  customer      Customer?   @relation(fields: [customerId], references: [id])
+  totalAmount   Float       @default(0.0)
+  discount      Float       @default(0.0)
+  finalAmount   Float       @default(0.0)
+  paymentMethod String      @default("cash")
+  notes         String?
+  createdAt     DateTime    @default(now())
+  items         SaleItem[]
+}
+
+// Позиция продажи
+model SaleItem {
+  id        String  @id @default(cuid())
+  saleId    String
+  sale      Sale    @relation(fields: [saleId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+  price     Float
+  total     Float
+}
+
+// Программа лояльности
+model LoyaltyProgram {
+  id              String          @id @default(cuid())
+  name            String
+  minSpent        Float
+  cashbackPercent Float           @default(5.0)
+  discountPercent Float           @default(0.0)
+  benefits        String?
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  accounts        LoyaltyAccount[]
+}
+
+// Счёт лояльности клиента
+model LoyaltyAccount {
+  id          String         @id @default(cuid())
+  customerId  String         @unique
+  customer    Customer       @relation(fields: [customerId], references: [id])
+  programId   String
+  program     LoyaltyProgram @relation(fields: [programId], references: [id])
+  points      Float          @default(0.0)
+  totalEarned Float          @default(0.0)
+  totalUsed   Float          @default(0.0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+// Финансовая транзакция
+model FinancialTransaction {
+  id          String   @id @default(cuid())
+  type        String
+  amount      Float
+  description String?
+  referenceId String?
+  createdAt   DateTime @default(now())
+}

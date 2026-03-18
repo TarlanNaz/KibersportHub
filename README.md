@@ -1,36 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CyberHub - Система управления киберспортивным клубом
 
-## Getting Started
+## Быстрый старт
 
-First, run the development server:
+### Требования
+- Node.js 18+ или Bun
+- SQLite (встроен)
+
+### Установка
 
 ```bash
+# 1. Распакуй архив
+tar -xzvf cyberhub-project.tar.gz
+cd cyberhub-project
+
+# 2. Установи зависимости
+bun install
+# ИЛИ
+npm install
+
+# 3. Создай базу данных
+bun run db:push
+# ИЛИ
+npx prisma db push
+
+# 4. Запусти сервер
+bun run dev
+# ИЛИ
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Открыть в браузере
+http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Первый запуск
+Нажми кнопку **"Заполнить данными"** в правом верхнем углу для загрузки тестовых данных.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Функционал
 
-To learn more about Next.js, take a look at the following resources:
+### 1. Дашборд
+- Общая выручка (игры + магазин)
+- Загрузка клуба в реальном времени
+- Карта игровых мест с визуализацией статусов
+- Активные сессии
+- Популярные товары
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. Игровые места
+- 20 мест: 15 PC, 3 консоли, 1 VR, 1 стриминг
+- Статусы: свободно/занято/техобслуживание
+- Характеристики оборудования
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 3. Система бронирования
+- 5 тарифов с разными скидками
+- Автоматический расчёт стоимости
+- Привязка к клиентам
 
-## Deploy on Vercel
+### 4. Магазин
+- Категории: еда, напитки, мерч, аксессуары
+- Корзина с расчётом итога
+- Начисление кэшбэка
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 5. База клиентов
+- Регистрация с никнеймами
+- История посещений и трат
+- Поиск по имени/телефону/нику
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 6. Программа лояльности
+- 4 уровня: Бронза, Серебро, Золото, Платина
+- Кэшбэк до 10%, скидки до 15%
+- Автоматическое повышение уровня
+
+---
+
+## Технологии
+
+- **Frontend**: Next.js 16, React 19, TypeScript, Tailwind CSS
+- **UI**: shadcn/ui компоненты
+- **Backend**: Next.js API Routes
+- **Database**: Prisma ORM + SQLite
+- **Icons**: Lucide React
+
+---
+
+## Структура проекта
+
+```
+├── prisma/
+│   └── schema.prisma      # Модели базы данных
+├── src/
+│   ├── app/
+│   │   ├── page.tsx       # Главный UI (SPA)
+│   │   └── api/           # API routes
+│   ├── lib/
+│   │   └── db.ts          # Prisma клиент
+│   └── components/ui/     # UI компоненты
+├── db/
+│   └── custom.db          # SQLite база данных
+└── package.json
+```
+
+---
+
+## API Endpoints
+
+| Endpoint | Метод | Описание |
+|----------|-------|----------|
+| `/api/spots` | GET, POST, PUT, DELETE | Игровые места |
+| `/api/bookings` | GET, POST, PUT | Бронирования |
+| `/api/customers` | GET, POST, PUT | Клиенты |
+| `/api/products` | GET, POST, PUT | Товары |
+| `/api/sales` | GET, POST | Продажи |
+| `/api/tariffs` | GET, POST, PUT, DELETE | Тарифы |
+| `/api/dashboard` | GET | Аналитика |
+| `/api/loyalty` | GET, PUT | Программа лояльности |
+| `/api/seed` | POST | Заполнение БД тестовыми данными |
+
+---
+
+## Хакатон ИТ-Форум 2026
+**Кейс #7: Разработка учетной системы для киберспортивного хаба**
+
+Заказчик: Фирма 1С
+
+### MVP готов за 3 дня:
+- ✅ Бронирование игровых мест
+- ✅ Тарификация игрового времени (биллинг)
+- ✅ Учет продаж товаров (кафе/мерч)
+- ✅ Управление программами лояльности
+- ✅ Анализ финансовой эффективности
+- ✅ Расчет экономической рентабельности
