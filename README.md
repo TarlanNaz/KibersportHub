@@ -9,28 +9,24 @@
 ### Установка
 
 ```bash
-# 1. Распакуй архив
-tar -xzvf cyberhub-project.tar.gz
-cd cyberhub-project
-
-# 2. Установи зависимости
+# 1. Установи зависимости
 bun install
 # ИЛИ
 npm install
 
-# 3. Создай базу данных
+# 2. Создай базу данных
 bun run db:push
 # ИЛИ
 npx prisma db push
 
-# 4. Запусти сервер
+# 3. Запусти сервер
 bun run dev
 # ИЛИ
 npm run dev
 ```
 
 ### Открыть в браузере
-http://localhost:3000
+http://localhost:8000
 
 ### Первый запуск
 Нажми кнопку **"Заполнить данными"** в правом верхнем углу для загрузки тестовых данных.
